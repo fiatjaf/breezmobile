@@ -52,12 +52,12 @@ class CreateInvoicePageState extends State<CreateInvoicePage> {
   final BackgroundTaskService _bgService = ServiceInjector().backgroundTaskService;
   KeyboardDoneAction _doneAction;
 
-  @override void didChangeDependencies(){        
+  @override void didChangeDependencies(){
     InvoiceBloc invoiceBloc = AppBlocsProvider.of<InvoiceBloc>(context);
-    if (!_isInit) {      
-      _paidInvoicesSubscription = invoiceBloc.paidInvoicesStream.listen((paid) {            
-            Navigator.popUntil(context, ModalRoute.withName("/create_invoice"));  
-            Navigator.pop(context, "Payment was successfuly received!");            
+    if (!_isInit) {
+      _paidInvoicesSubscription = invoiceBloc.paidInvoicesStream.listen((paid) {
+            Navigator.popUntil(context, ModalRoute.withName("/create_invoice"));
+            Navigator.pop(context, "Payment was successfuly received!");
       });
       _isInit = true;
       Future.delayed(Duration(milliseconds: 200), () => FocusScope.of(context).requestFocus(_amountFocusNode));
@@ -65,7 +65,7 @@ class CreateInvoicePageState extends State<CreateInvoicePage> {
     super.didChangeDependencies();
   }
 
-  @override 
+  @override
   void initState() {
     _lnurlBloc = new LNUrlBloc();
     _doneAction = new KeyboardDoneAction(<FocusNode>[_amountFocusNode]);
@@ -128,7 +128,7 @@ class CreateInvoicePageState extends State<CreateInvoicePage> {
             stream: accountBloc.accountStream,
             builder: (context, snapshot) {
               var account = snapshot.data;
-              return new IconButton(                
+              return new IconButton(
                 alignment: Alignment.center,
                 icon: new Image(
                   image: new AssetImage("src/icon/qr_scan.png"),
@@ -194,7 +194,7 @@ class CreateInvoicePageState extends State<CreateInvoicePage> {
                           return Container();
                         }
                         AccountModel acc = accSnapshot.data;
-                        
+
                         String message;
                         if (accSnapshot.hasError) {
                           message = accSnapshot.error.toString();
@@ -273,16 +273,16 @@ class CreateInvoicePageState extends State<CreateInvoicePage> {
           Text(
             "Please grant Breez camera permission to scan QR codes.",
             style: Theme.of(context).dialogTheme.contentTextStyle,
-          ));       
-      }   
-    } 
+          ));
+      }
+    }
     catch (e) {
-      promptError(context, "", Text(e.toString(), style: Theme.of(context).dialogTheme.contentTextStyle));  
+      promptError(context, "", Text(e.toString(), style: Theme.of(context).dialogTheme.contentTextStyle));
     }
   }
 
-  Future _handleLNUrlWithdraw(AccountModel account, String url) async{
-    Fetch fetchAction = Fetch(url);
+  Future _handleLNUrlWithdraw(AccountModel account, String lnurl) async{
+    Fetch fetchAction = Fetch(lnurl);
     _lnurlBloc.actionsSink.add(fetchAction);
     var response = await fetchAction.future;
     if (response.runtimeType != WithdrawFetchResponse) {
@@ -290,7 +290,7 @@ class CreateInvoicePageState extends State<CreateInvoicePage> {
     }
     WithdrawFetchResponse withdrawResponse = response as WithdrawFetchResponse;
     setState(() {
-      _withdrawUrl = url;
+      _withdrawUrl = lnurl;
       _descriptionController.text = withdrawResponse.defaultDescription;
       _amountController.text = account.currency.format(withdrawResponse.maxAmount, includeSymbol: false);
     });
@@ -304,8 +304,8 @@ class CreateInvoicePageState extends State<CreateInvoicePage> {
           null,
           account.currency.parse(_amountController.text)));
 
-    Widget dialog = _withdrawUrl != null ? 
-    LNURlWidthrawDialog(_withdrawUrl, invoiceBloc, _lnurlBloc) : 
+    Widget dialog = _withdrawUrl != null ?
+    LNURlWidthrawDialog(_withdrawUrl, invoiceBloc, _lnurlBloc) :
     QrCodeDialog(context, invoiceBloc);
 
     return _bgService.runAsTask(
@@ -315,5 +315,5 @@ class CreateInvoicePageState extends State<CreateInvoicePage> {
         log.info("waiting for payment background task finished");
       }
     );
-  }  
+  }
 }

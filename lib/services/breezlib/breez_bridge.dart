@@ -12,41 +12,41 @@ import 'package:path_provider/path_provider.dart';
 // protoc --dart_out=grpc:lib/services/breezlib/data/ -Ilib/services/breezlib/ lib/services/breezlib/rpc.proto
 class BreezBridge {
   static const _methodChannel = const MethodChannel('com.breez.client/breez_lib');
-  static const _eventChannel = const EventChannel('com.breez.client/breez_lib_notifications');  
+  static const _eventChannel = const EventChannel('com.breez.client/breez_lib_notifications');
 
 
   Completer _readyCompleter = new Completer();
   Completer _startedCompleter = new Completer();
   StreamController _eventsController = new StreamController<NotificationEvent>.broadcast();
   Stream<NotificationEvent> get notificationStream => _eventsController.stream;
-  bool ready = false;  
-  Future<Directory> _tempDirFuture;  
+  bool ready = false;
+  Future<Directory> _tempDirFuture;
 
   BreezBridge(){
-    _eventChannel.receiveBroadcastStream().listen((event){      
+    _eventChannel.receiveBroadcastStream().listen((event){
       var notification = new NotificationEvent()..mergeFromBuffer(event);
       if (notification.type == NotificationEvent_NotificationType.READY){
         ready = true;
         _readyCompleter.complete();
       }
       if (notification.type == NotificationEvent_NotificationType.LIGHTNING_SERVICE_DOWN) {
-        _readyCompleter = new Completer();        
+        _readyCompleter = new Completer();
       }
       _eventsController.add(new NotificationEvent()..mergeFromBuffer(event));
     });
-    _tempDirFuture = getTemporaryDirectory();    
-    initLightningDir();     
+    _tempDirFuture = getTemporaryDirectory();
+    initLightningDir();
   }
 
   initLightningDir(){
     logger.log.info("initLightningDir started");
-    
+
     getApplicationDocumentsDirectory()
       .then((workingDir) {
         return copyBreezConfig(workingDir.path)
           .then((_) async {
-            var tmpDir = await _tempDirFuture;            
-            await init(workingDir.path, tmpDir.path); 
+            var tmpDir = await _tempDirFuture;
+            await init(workingDir.path, tmpDir.path);
             logger.log.info("breez library init finished");
             _startedCompleter.complete(true);
           });
@@ -57,7 +57,7 @@ class BreezBridge {
     return getApplicationDocumentsDirectory();
   }
 
-  Future init(String appDir, String tmpDir) {    
+  Future init(String appDir, String tmpDir) {
     return _methodChannel.invokeMethod("init", {
       "workingDir": appDir,
       "tempDir": tmpDir});
@@ -67,7 +67,7 @@ class BreezBridge {
     return _invokeMethodImmediate("rate").then((result) => new Rates()..mergeFromBuffer(result ?? []));
   }
 
-  Future startLightning() {    
+  Future startLightning() {
     return _startedCompleter.future.then((_) =>  _start());
   }
 
@@ -76,28 +76,28 @@ class BreezBridge {
   }
 
   Future _start() async{
-    print(" breez bridge - start...");      
+    print(" breez bridge - start...");
     return _methodChannel.invokeMethod("start")
-    .then((_) { 
-      print(" breez bridge - start lightning finished");          
-    });    
+    .then((_) {
+      print(" breez bridge - start lightning finished");
+    });
   }
 
   Future stop({bool permanent = false}){
     return _methodChannel.invokeMethod("stop", {"permanent": permanent});
-  }  
+  }
 
   void log(String msg, String level) {
     _invokeMethodImmediate("log", {"msg": msg, "lvl": level});
   }
 
   Future<LNUrlResponse> fetchLNUrl(String lnurl) {
-    return _invokeMethodWhenReady("fetchLnurl")
+    return _invokeMethodWhenReady("fetchLnurl", {"argument": lnurl})
       .then((result) => LNUrlResponse()..mergeFromBuffer(result ?? []));
   }
 
-  Future withdrawLNUrl(String lnurl, String bolt11Invoice){
-    return _invokeMethodWhenReady("withdrawLnurl");
+  Future withdrawLNUrl(String bolt11Invoice){
+    return _invokeMethodWhenReady("withdrawLnurl", {"argument": bolt11Invoice});
   }
 
   Future<String> getLogPath() {
@@ -153,7 +153,7 @@ class BreezBridge {
     return _invokeMethodWhenReady("sendPaymentForRequest", {"argument": invoice.writeToBuffer()}).then((payReq) => PaymentResponse()..mergeFromBuffer(payReq ?? []));
   }
 
-  Future sendPaymentFailureBugReport(String traceReport) {    
+  Future sendPaymentFailureBugReport(String traceReport) {
     return _invokeMethodWhenReady("sendPaymentFailureBugReport", {"argument": traceReport});
   }
 
@@ -205,7 +205,7 @@ class BreezBridge {
     var request = CreateRatchetSessionRequest()
       ..sessionID = sessionID
       ..expiry = expiry
-      ..secret = secret ?? ""      
+      ..secret = secret ?? ""
       ..remotePubKey = remotePubKey ?? "";
     return _invokeMethodImmediate("createRatchetSession", {"argument": request.writeToBuffer()}).then((res) =>  new CreateRatchetSessionReply()..mergeFromBuffer(res ?? []));
   }
@@ -258,7 +258,7 @@ class BreezBridge {
       ..satPerByte = feeRate
       ..address = address
       ..refundAddress = refundAddress;
-    return _invokeMethodWhenReady("refund",  {"argument": refundRequest.writeToBuffer()}).then((txID) => txID as String);      
+    return _invokeMethodWhenReady("refund",  {"argument": refundRequest.writeToBuffer()}).then((txID) => txID as String);
   }
 
   Future<FundStatusReply> getFundStatus(String notificationToken) {
@@ -268,11 +268,11 @@ class BreezBridge {
   }
 
   Future registerReceivePaymentReadyNotification(String token) {
-    return _invokeMethodWhenReady("registerReceivePaymentReadyNotification", {"argument": token});       
+    return _invokeMethodWhenReady("registerReceivePaymentReadyNotification", {"argument": token});
   }
 
   Future registerChannelOpenedNotification(String token) {
-    return _invokeMethodWhenReady("registerChannelOpenedNotification", {"argument": token});       
+    return _invokeMethodWhenReady("registerChannelOpenedNotification", {"argument": token});
   }
 
   Future<String> sendCommand(String command) {
@@ -290,19 +290,19 @@ class BreezBridge {
   }
 
   Future<String> sendWalletCoins(String address, Int64 satPerByteFee){
-    var request = 
+    var request =
       SendWalletCoinsRequest()
-        ..address = address        
+        ..address = address
         ..satPerByteFee = satPerByteFee;
-    return _invokeMethodWhenReady("sendWalletCoins", {"argument": request.writeToBuffer()}).then((txid) => txid as String);        
+    return _invokeMethodWhenReady("sendWalletCoins", {"argument": request.writeToBuffer()}).then((txid) => txid as String);
   }
 
   Future<Int64> getDefaultOnChainFeeRate(){
-    return _invokeMethodImmediate("getDefaultOnChainFeeRate").then((res) => Int64( res as int));        
+    return _invokeMethodImmediate("getDefaultOnChainFeeRate").then((res) => Int64( res as int));
   }
 
   Future registerPeriodicSync(String token){
-    return _invokeMethodImmediate("registerPeriodicSync", {"argument": token});        
+    return _invokeMethodImmediate("registerPeriodicSync", {"argument": token});
   }
 
   Future requestBackup(){
@@ -317,9 +317,9 @@ class BreezBridge {
     return _invokeMethodImmediate("setBackupProvider", {"argument": backupProvider});
   }
 
-  Future<String> getAvailableBackups() async {    
+  Future<String> getAvailableBackups() async {
     await signIn(true);
-    return await _methodChannel.invokeMethod("availableSnapshots").then((res) => res as String);         
+    return await _methodChannel.invokeMethod("availableSnapshots").then((res) => res as String);
   }
 
   Future restore(String nodeId, List<int> encryptionKey) async {
@@ -327,7 +327,7 @@ class BreezBridge {
       await _methodChannel.invokeMethod("restoreBackup", {"nodeID": nodeId, "encryptionKey": encryptionKey});
     } on PlatformException catch(e) {
       throw e.message;
-    }    
+    }
   }
 
   Future<dynamic> signIn(bool force){
@@ -340,15 +340,15 @@ class BreezBridge {
 
   Future copyBreezConfig(String workingDir) async{
     logger.log.info("copyBreezConfig started");
-    
-    File file = File(workingDir + "/breez.conf");        
-    String configString = await rootBundle.loadString('conf/breez.conf');      
-    file.writeAsStringSync(configString, flush: true);          
-    
-    File lndConf = File(workingDir + "/lnd.conf");    
-    String data = await rootBundle.loadString('conf/lnd.conf');      
-    lndConf.writeAsStringSync(data, flush: true);    
-    
+
+    File file = File(workingDir + "/breez.conf");
+    String configString = await rootBundle.loadString('conf/breez.conf');
+    file.writeAsStringSync(configString, flush: true);
+
+    File lndConf = File(workingDir + "/lnd.conf");
+    String data = await rootBundle.loadString('conf/lnd.conf');
+    lndConf.writeAsStringSync(data, flush: true);
+
     logger.log.info("copyBreezConfig finished");
   }
 
@@ -371,14 +371,14 @@ class BreezBridge {
 
   Future _invokeMethodImmediate(String methodName, [dynamic arguments]) {
     return _startedCompleter.future.then(
-            (completed) {            
+            (completed) {
           return _methodChannel.invokeMethod(methodName, arguments).catchError((err){
             if (err.runtimeType == PlatformException) {
               print("Error in calling method " + methodName);
               throw (err as PlatformException).message;
             }
             throw err;
-          });        
+          });
         }
     );
   }
