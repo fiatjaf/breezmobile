@@ -2,6 +2,8 @@ import 'package:breez/bloc/lnurl/lnurl_actions.dart';
 import 'package:breez/bloc/lnurl/lnurl_bloc.dart';
 import 'package:breez/bloc/lnurl/lnurl_model.dart';
 import 'package:breez/routes/sync_progress_dialog.dart';
+import 'package:breez/bloc/invoice/invoice_bloc.dart';
+import 'package:breez/bloc/invoice/invoice_model.dart';
 import 'package:breez/widgets/error_dialog.dart';
 import 'package:breez/widgets/loader.dart';
 import 'package:breez/widgets/route.dart';
@@ -12,9 +14,10 @@ import '../routes/create_invoice/create_invoice_page.dart';
 class LNURLHandler {
   final BuildContext _context;
   final LNUrlBloc lnurlBloc;
+  final Sink<PaymentRequestModel> invoicesSink;
   ModalRoute _loaderRoute;
 
-  LNURLHandler(this._context, this.lnurlBloc) {
+  LNURLHandler(this._context, this.lnurlBloc, this.invoicesSink) {
     lnurlBloc.listenLNUrl().listen((response) {
       if (response.runtimeType == fetchLNUrlState) {
         _setLoading(response == fetchLNUrlState.started);
@@ -48,10 +51,11 @@ class LNURLHandler {
       Navigator.popUntil(context, (route) {
         return route.settings.name == "/";
       });
-
       Navigator.of(context).push(FadeInRoute(
         builder: (_) => CreateInvoicePage(lnurlWithdraw: response),
       ));
+    } else if (response.runtimeType == PayFetchResponse) {
+      this.invoicesSink.add(PaymentRequestModel(response.response, null, null));
     } else {
       throw "Unsupported LNUrl";
     }

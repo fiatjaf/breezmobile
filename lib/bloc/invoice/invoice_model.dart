@@ -23,9 +23,12 @@ class PaymentRequestModel {
   String get payeeImageURL => _invoice.payeeImageURL;
   String get payeeName => _invoice.payeeName;
   Int64 get amount => _invoice.amount;
+  Int64 get min => _invoice.minSendable;
+  Int64 get max => _invoice.maxSendable;
   String get rawPayReq => _rawPayReq;
   bool get loaded => _invoice != null ? true : false;
   String get paymentHash => _paymentHash;
+  bool get isLnurlPay => _invoice.isLnurlPay;
 }
 
 class PaymentRequestError implements Exception {

@@ -22,8 +22,15 @@ class PaymentRequestInfoDialog extends StatefulWidget {
   final Function(Map map) _setAmountToPay;
   final double minHeight;
 
-  PaymentRequestInfoDialog(this.context, this.accountBloc, this.invoice,
-      this._onCancel, this._onWaitingConfirmation, this._onPaymentApproved, this._setAmountToPay, this.minHeight);
+  PaymentRequestInfoDialog(
+      this.context,
+      this.accountBloc,
+      this.invoice,
+      this._onCancel,
+      this._onWaitingConfirmation,
+      this._onPaymentApproved,
+      this._setAmountToPay,
+      this.minHeight);
 
   @override
   State<StatefulWidget> createState() {
@@ -45,6 +52,9 @@ class PaymentRequestInfoDialogState extends State<PaymentRequestInfoDialog> {
   @override
   void initState() {
     super.initState();
+    _invoiceAmountController = TextEditingController.fromValue(TextEditingValue(
+        composing: TextRange(start: 0, end: -1),
+        text: widget.invoice.amount.toString()));
     _invoiceAmountController.addListener(() {
       setState(() {});
     });
@@ -139,27 +149,21 @@ class PaymentRequestInfoDialogState extends State<PaymentRequestInfoDialog> {
   }
 
   Widget _buildRequestPayTextWidget() {
-    return widget.invoice.payeeName == null || widget.invoice.payeeName.isEmpty
-        ? Text(
-            "You are requested to pay:",
-            style: Theme.of(context)
-                .primaryTextTheme
-                .headline3
-                .copyWith(fontSize: 16),
-            textAlign: TextAlign.center,
-          )
-        : Text(
-            "is requesting you to pay:",
-            style: Theme.of(context)
-                .primaryTextTheme
-                .headline3
-                .copyWith(fontSize: 16),
-            textAlign: TextAlign.center,
-          );
+    return Text(
+      widget.invoice.payeeName == null || widget.invoice.payeeName.isEmpty
+          ? "You are requested to pay:"
+          : widget.invoice.min > 0
+              ? "requests a min of ${widget.invoice.min}, max of ${widget.invoice.max}:"
+              : "is requesting you to pay:",
+      style:
+          Theme.of(context).primaryTextTheme.headline3.copyWith(fontSize: 16),
+      textAlign: TextAlign.center,
+    );
   }
 
   Widget _buildAmountWidget(AccountModel account) {
-    if (widget.invoice.amount == 0) {
+    if (widget.invoice.amount == 0 ||
+        (widget.invoice.min > 0 && widget.invoice.max > 0)) {
       return Theme(
         data: Theme.of(context).copyWith(
             inputDecorationTheme: InputDecorationTheme(
@@ -184,7 +188,15 @@ class PaymentRequestInfoDialogState extends State<PaymentRequestInfoDialog> {
                 iconColor: Theme.of(context).primaryIconTheme.color,
                 focusNode: _amountFocusNode,
                 controller: _invoiceAmountController,
-                validatorFn: account.validateOutgoingPayment,
+                validatorFn: (Int64 amount) {
+                  if (amount < widget.invoice.min) {
+                    return "Can't pay less than ${widget.invoice.min}";
+                  } else if (amount > widget.invoice.max) {
+                    return "Can't pay more than ${widget.invoice.max}";
+                  }
+
+                  return account.validateOutgoingPayment(amount);
+                },
                 style: Theme.of(context)
                     .dialogTheme
                     .contentTextStyle
@@ -263,8 +275,7 @@ class PaymentRequestInfoDialogState extends State<PaymentRequestInfoDialog> {
   Widget _buildActions(AccountModel account) {
     List<Widget> actions = [
       SimpleDialogOption(
-        onPressed: () =>
-            widget._onCancel(),
+        onPressed: () => widget._onCancel(),
         child: Text("CANCEL", style: Theme.of(context).primaryTextTheme.button),
       )
     ];

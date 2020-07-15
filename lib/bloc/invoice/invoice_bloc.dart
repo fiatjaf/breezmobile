@@ -37,6 +37,7 @@ class InvoiceBloc with AsyncActionsHandler {
   final _receivedInvoicesController = BehaviorSubject<PaymentRequestModel>();
   Stream<PaymentRequestModel> get receivedInvoicesStream =>
       _receivedInvoicesController.stream;
+  Sink<PaymentRequestModel> get receivedInvoicesSink => _receivedInvoicesController.sink;
 
   final _paidInvoicesController = StreamController<String>.broadcast();
   Stream<String> get paidInvoicesStream => _paidInvoicesController.stream;

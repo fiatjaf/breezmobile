@@ -20,3 +20,9 @@ class ChannelFetchResponse {
   String get callback => response.callback;
   String get k1 => response.k1;
 }
+
+class PayFetchResponse {
+  final InvoiceMemo response;
+
+  PayFetchResponse(this.response);
+}

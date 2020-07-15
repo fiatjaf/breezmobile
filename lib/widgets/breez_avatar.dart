@@ -1,4 +1,6 @@
 import 'dart:io';
+import 'dart:convert';
+import 'dart:core';
 
 import 'package:breez/bloc/user_profile/default_profile_generator.dart'
     as generator;
@@ -46,23 +48,30 @@ class BreezAvatar extends StatelessWidget {
     Color avatarBgColor =
         this.backgroundColor ?? theme.sessionAvatarBackgroundColor;
 
-    if (avatarURL != null && avatarURL.isNotEmpty) {
-      if (avatarURL.startsWith("breez://profile_image?")) {
-        var queryParams = Uri.parse(avatarURL).queryParameters;
-        return _GeneratedAvatar(
-            radius, queryParams["animal"], queryParams["color"], avatarBgColor);
-      }
+    try {
+      if (avatarURL != null && avatarURL.isNotEmpty) {
+        if (avatarURL.startsWith("breez://profile_image?")) {
+          var queryParams = Uri.parse(avatarURL).queryParameters;
+          return _GeneratedAvatar(radius, queryParams["animal"],
+              queryParams["color"], avatarBgColor);
+        }
 
-      if (avatarURL.startsWith("src/icon/vendors/")) {
-        return _VendorAvatar(radius, avatarURL);
-      }
+        if (avatarURL.startsWith("src/icon/vendors/")) {
+          return _VendorAvatar(radius, avatarURL);
+        }
 
-      if (Uri.tryParse(avatarURL)?.scheme?.startsWith("http") ?? false) {
-        return _NetworkImageAvatar(avatarURL, radius);
-      }
+        if (Uri.tryParse(avatarURL)?.scheme?.startsWith("http") ?? false) {
+          return _NetworkImageAvatar(avatarURL, radius);
+        }
 
-      return _FileImageAvatar(radius, avatarURL);
-    }
+        if (avatarURL.startsWith("data:")) {
+          UriData datauri = UriData.parse(this.avatarURL);
+          return _DataUriAvatar(radius, datauri);
+        }
+
+        return _FileImageAvatar(radius, avatarURL);
+      }
+    } on FormatException {}
 
     return _UnknownAvatar(radius, avatarBgColor);
   }
@@ -150,6 +159,21 @@ class _NetworkImageAvatar extends StatelessWidget {
     return CircleAvatar(
       radius: radius,
       backgroundImage: AdvancedNetworkImage(avatarURL, useDiskCache: true),
+    );
+  }
+}
+
+class _DataUriAvatar extends StatelessWidget {
+  final double radius;
+  final UriData datauri;
+
+  _DataUriAvatar(this.radius, this.datauri);
+
+  @override
+  Widget build(BuildContext context) {
+    return CircleAvatar(
+      radius: radius,
+      backgroundImage: new MemoryImage(base64.decode(datauri.contentText)),
     );
   }
 }

@@ -224,6 +224,7 @@ class Payment extends $pb.GeneratedMessage {
     ..aOB(16, 'isChannelCloseConfimed', protoName: 'isChannelCloseConfimed')
     ..aOS(17, 'closedChannelTxID', protoName: 'closedChannelTxID')
     ..aOB(18, 'isKeySend', protoName: 'isKeySend')
+    ..aOM<LnurlPay>(19, 'lnurlPay', protoName: 'lnurlPay', subBuilder: LnurlPay.create)
     ..hasRequiredFields = false
   ;
 
@@ -387,6 +388,17 @@ class Payment extends $pb.GeneratedMessage {
   $core.bool hasIsKeySend() => $_has(15);
   @$pb.TagNumber(18)
   void clearIsKeySend() => clearField(18);
+
+  @$pb.TagNumber(19)
+  LnurlPay get lnurlPay => $_getN(16);
+  @$pb.TagNumber(19)
+  set lnurlPay(LnurlPay v) { setField(19, v); }
+  @$pb.TagNumber(19)
+  $core.bool hasLnurlPay() => $_has(16);
+  @$pb.TagNumber(19)
+  void clearLnurlPay() => clearField(19);
+  @$pb.TagNumber(19)
+  LnurlPay ensureLnurlPay() => $_ensure(16);
 }
 
 class PaymentsList extends $pb.GeneratedMessage {
@@ -598,6 +610,9 @@ class InvoiceMemo extends $pb.GeneratedMessage {
     ..aOS(6, 'payerImageURL', protoName: 'payerImageURL')
     ..aOB(7, 'transferRequest', protoName: 'transferRequest')
     ..aInt64(8, 'expiry')
+    ..aInt64(9, 'minSendable', protoName: 'minSendable')
+    ..aInt64(10, 'maxSendable', protoName: 'maxSendable')
+    ..aOB(11, 'isLnurlPay', protoName: 'isLnurlPay')
     ..hasRequiredFields = false
   ;
 
@@ -687,6 +702,33 @@ class InvoiceMemo extends $pb.GeneratedMessage {
   $core.bool hasExpiry() => $_has(7);
   @$pb.TagNumber(8)
   void clearExpiry() => clearField(8);
+
+  @$pb.TagNumber(9)
+  $fixnum.Int64 get minSendable => $_getI64(8);
+  @$pb.TagNumber(9)
+  set minSendable($fixnum.Int64 v) { $_setInt64(8, v); }
+  @$pb.TagNumber(9)
+  $core.bool hasMinSendable() => $_has(8);
+  @$pb.TagNumber(9)
+  void clearMinSendable() => clearField(9);
+
+  @$pb.TagNumber(10)
+  $fixnum.Int64 get maxSendable => $_getI64(9);
+  @$pb.TagNumber(10)
+  set maxSendable($fixnum.Int64 v) { $_setInt64(9, v); }
+  @$pb.TagNumber(10)
+  $core.bool hasMaxSendable() => $_has(9);
+  @$pb.TagNumber(10)
+  void clearMaxSendable() => clearField(10);
+
+  @$pb.TagNumber(11)
+  $core.bool get isLnurlPay => $_getBF(10);
+  @$pb.TagNumber(11)
+  set isLnurlPay($core.bool v) { $_setBool(10, v); }
+  @$pb.TagNumber(11)
+  $core.bool hasIsLnurlPay() => $_has(10);
+  @$pb.TagNumber(11)
+  void clearIsLnurlPay() => clearField(11);
 }
 
 class Invoice extends $pb.GeneratedMessage {
@@ -1870,6 +1912,7 @@ class LSPList extends $pb.GeneratedMessage {
 enum LNUrlResponse_Action {
   withdraw, 
   channel, 
+  pay, 
   notSet
 }
 
@@ -1877,12 +1920,14 @@ class LNUrlResponse extends $pb.GeneratedMessage {
   static const $core.Map<$core.int, LNUrlResponse_Action> _LNUrlResponse_ActionByTag = {
     1 : LNUrlResponse_Action.withdraw,
     2 : LNUrlResponse_Action.channel,
+    3 : LNUrlResponse_Action.pay,
     0 : LNUrlResponse_Action.notSet
   };
   static final $pb.BuilderInfo _i = $pb.BuilderInfo('LNUrlResponse', package: const $pb.PackageName('data'), createEmptyInstance: create)
-    ..oo(0, [1, 2])
+    ..oo(0, [1, 2, 3])
     ..aOM<LNUrlWithdraw>(1, 'withdraw', subBuilder: LNUrlWithdraw.create)
     ..aOM<LNURLChannel>(2, 'channel', subBuilder: LNURLChannel.create)
+    ..aOM<InvoiceMemo>(3, 'pay', subBuilder: InvoiceMemo.create)
     ..hasRequiredFields = false
   ;
 
@@ -1925,6 +1970,17 @@ class LNUrlResponse extends $pb.GeneratedMessage {
   void clearChannel() => clearField(2);
   @$pb.TagNumber(2)
   LNURLChannel ensureChannel() => $_ensure(1);
+
+  @$pb.TagNumber(3)
+  InvoiceMemo get pay => $_getN(2);
+  @$pb.TagNumber(3)
+  set pay(InvoiceMemo v) { setField(3, v); }
+  @$pb.TagNumber(3)
+  $core.bool hasPay() => $_has(2);
+  @$pb.TagNumber(3)
+  void clearPay() => clearField(3);
+  @$pb.TagNumber(3)
+  InvoiceMemo ensurePay() => $_ensure(2);
 }
 
 class LNUrlWithdraw extends $pb.GeneratedMessage {
@@ -2027,6 +2083,77 @@ class LNURLChannel extends $pb.GeneratedMessage {
   $core.bool hasUri() => $_has(2);
   @$pb.TagNumber(3)
   void clearUri() => clearField(3);
+}
+
+class LnurlPay extends $pb.GeneratedMessage {
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo('LnurlPay', package: const $pb.PackageName('data'), createEmptyInstance: create)
+    ..aOS(1, 'lnurl')
+    ..aOB(2, 'repeatable')
+    ..aOS(3, 'metadataHash', protoName: 'metadataHash')
+    ..aOS(4, 'successPreamble', protoName: 'successPreamble')
+    ..aOS(5, 'successMessage', protoName: 'successMessage')
+    ..hasRequiredFields = false
+  ;
+
+  LnurlPay._() : super();
+  factory LnurlPay() => create();
+  factory LnurlPay.fromBuffer($core.List<$core.int> i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromBuffer(i, r);
+  factory LnurlPay.fromJson($core.String i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(i, r);
+  LnurlPay clone() => LnurlPay()..mergeFromMessage(this);
+  LnurlPay copyWith(void Function(LnurlPay) updates) => super.copyWith((message) => updates(message as LnurlPay));
+  $pb.BuilderInfo get info_ => _i;
+  @$core.pragma('dart2js:noInline')
+  static LnurlPay create() => LnurlPay._();
+  LnurlPay createEmptyInstance() => create();
+  static $pb.PbList<LnurlPay> createRepeated() => $pb.PbList<LnurlPay>();
+  @$core.pragma('dart2js:noInline')
+  static LnurlPay getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<LnurlPay>(create);
+  static LnurlPay _defaultInstance;
+
+  @$pb.TagNumber(1)
+  $core.String get lnurl => $_getSZ(0);
+  @$pb.TagNumber(1)
+  set lnurl($core.String v) { $_setString(0, v); }
+  @$pb.TagNumber(1)
+  $core.bool hasLnurl() => $_has(0);
+  @$pb.TagNumber(1)
+  void clearLnurl() => clearField(1);
+
+  @$pb.TagNumber(2)
+  $core.bool get repeatable => $_getBF(1);
+  @$pb.TagNumber(2)
+  set repeatable($core.bool v) { $_setBool(1, v); }
+  @$pb.TagNumber(2)
+  $core.bool hasRepeatable() => $_has(1);
+  @$pb.TagNumber(2)
+  void clearRepeatable() => clearField(2);
+
+  @$pb.TagNumber(3)
+  $core.String get metadataHash => $_getSZ(2);
+  @$pb.TagNumber(3)
+  set metadataHash($core.String v) { $_setString(2, v); }
+  @$pb.TagNumber(3)
+  $core.bool hasMetadataHash() => $_has(2);
+  @$pb.TagNumber(3)
+  void clearMetadataHash() => clearField(3);
+
+  @$pb.TagNumber(4)
+  $core.String get successPreamble => $_getSZ(3);
+  @$pb.TagNumber(4)
+  set successPreamble($core.String v) { $_setString(3, v); }
+  @$pb.TagNumber(4)
+  $core.bool hasSuccessPreamble() => $_has(3);
+  @$pb.TagNumber(4)
+  void clearSuccessPreamble() => clearField(4);
+
+  @$pb.TagNumber(5)
+  $core.String get successMessage => $_getSZ(4);
+  @$pb.TagNumber(5)
+  set successMessage($core.String v) { $_setString(4, v); }
+  @$pb.TagNumber(5)
+  $core.bool hasSuccessMessage() => $_has(4);
+  @$pb.TagNumber(5)
+  void clearSuccessMessage() => clearField(5);
 }
 
 class ReverseSwapRequest extends $pb.GeneratedMessage {

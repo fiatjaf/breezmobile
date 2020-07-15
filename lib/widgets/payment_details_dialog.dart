@@ -231,6 +231,21 @@ Future<Null> showPaymentDetailsDialog(
               : ShareablePaymentRow(
                   title: "On-chain Transaction",
                   sharedValue: paymentInfo.redeemTxID),
+          paymentInfo.lnurlPay == null
+              ? Container()
+              : ShareablePaymentRow(
+                  title: "Metadata Hash",
+                  sharedValue: paymentInfo.lnurlPay.metadataHash),
+          paymentInfo.lnurlPay == null
+              ? Container()
+              : ShareablePaymentRow(
+                  title: paymentInfo.lnurlPay.successPreamble,
+                  sharedValue: paymentInfo.lnurlPay.successMessage),
+          paymentInfo.lnurlPay == null || !paymentInfo.lnurlPay.repeatable
+              ? Container()
+              : ShareablePaymentRow(
+                  title: "Repeat Payment",
+                  sharedValue: paymentInfo.lnurlPay.lnurl),
         ],
       ),
     ),

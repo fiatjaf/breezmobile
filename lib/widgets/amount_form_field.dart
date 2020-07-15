@@ -34,13 +34,15 @@ class AmountFormField extends TextFormField {
       FormFieldSetter<String> onSaved,
       bool enabled,
       ValueChanged<String> onChanged,
-      bool readOnly})
+      bool readOnly,
+      String suffix = ""})
       : super(
             focusNode: focusNode,
             keyboardType: TextInputType.numberWithOptions(
                 decimal: accountModel.currency != Currency.SAT),
             decoration: InputDecoration(
-              labelText: "Amount in ${accountModel.currency.displayName}",
+              labelText:
+                  "Amount in ${accountModel.currency.displayName}${suffix}",
               suffixIcon: IconButton(
                 icon: Image.asset(
                   (accountModel.fiatCurrency != null)

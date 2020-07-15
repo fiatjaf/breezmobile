@@ -73,6 +73,7 @@ const Payment$json = const {
     const {'1': 'isChannelCloseConfimed', '3': 16, '4': 1, '5': 8, '10': 'isChannelCloseConfimed'},
     const {'1': 'closedChannelTxID', '3': 17, '4': 1, '5': 9, '10': 'closedChannelTxID'},
     const {'1': 'isKeySend', '3': 18, '4': 1, '5': 8, '10': 'isKeySend'},
+    const {'1': 'lnurlPay', '3': 19, '4': 1, '5': 11, '6': '.data.LnurlPay', '10': 'lnurlPay'},
   ],
   '4': const [Payment_PaymentType$json],
 };
@@ -139,6 +140,9 @@ const InvoiceMemo$json = const {
     const {'1': 'payerImageURL', '3': 6, '4': 1, '5': 9, '10': 'payerImageURL'},
     const {'1': 'transferRequest', '3': 7, '4': 1, '5': 8, '10': 'transferRequest'},
     const {'1': 'expiry', '3': 8, '4': 1, '5': 3, '10': 'expiry'},
+    const {'1': 'minSendable', '3': 9, '4': 1, '5': 3, '10': 'minSendable'},
+    const {'1': 'maxSendable', '3': 10, '4': 1, '5': 3, '10': 'maxSendable'},
+    const {'1': 'isLnurlPay', '3': 11, '4': 1, '5': 8, '10': 'isLnurlPay'},
   ],
 };
 
@@ -182,6 +186,7 @@ const NotificationEvent_NotificationType$json = const {
     const {'1': 'REVERSE_SWAP_CLAIM_SUCCEEDED', '2': 16},
     const {'1': 'REVERSE_SWAP_CLAIM_FAILED', '2': 17},
     const {'1': 'REVERSE_SWAP_CLAIM_CONFIRMED', '2': 18},
+    const {'1': 'LSP_CHANNEL_OPENED', '2': 19},
   ],
 };
 
@@ -400,6 +405,7 @@ const LNUrlResponse$json = const {
   '2': const [
     const {'1': 'withdraw', '3': 1, '4': 1, '5': 11, '6': '.data.LNUrlWithdraw', '9': 0, '10': 'withdraw'},
     const {'1': 'channel', '3': 2, '4': 1, '5': 11, '6': '.data.LNURLChannel', '9': 0, '10': 'channel'},
+    const {'1': 'pay', '3': 3, '4': 1, '5': 11, '6': '.data.InvoiceMemo', '9': 0, '10': 'pay'},
   ],
   '8': const [
     const {'1': 'action'},
@@ -421,6 +427,17 @@ const LNURLChannel$json = const {
     const {'1': 'k1', '3': 1, '4': 1, '5': 9, '10': 'k1'},
     const {'1': 'callback', '3': 2, '4': 1, '5': 9, '10': 'callback'},
     const {'1': 'uri', '3': 3, '4': 1, '5': 9, '10': 'uri'},
+  ],
+};
+
+const LnurlPay$json = const {
+  '1': 'LnurlPay',
+  '2': const [
+    const {'1': 'lnurl', '3': 1, '4': 1, '5': 9, '10': 'lnurl'},
+    const {'1': 'repeatable', '3': 2, '4': 1, '5': 8, '10': 'repeatable'},
+    const {'1': 'metadataHash', '3': 3, '4': 1, '5': 9, '10': 'metadataHash'},
+    const {'1': 'successPreamble', '3': 4, '4': 1, '5': 9, '10': 'successPreamble'},
+    const {'1': 'successMessage', '3': 5, '4': 1, '5': 9, '10': 'successMessage'},
   ],
 };
 

@@ -129,6 +129,11 @@ class BreezBridge {
     return _invokeMethodWhenReady("withdrawLnurl", {"argument": bolt11Invoice});
   }
 
+  Future payLNUrl(Int64 amount) {
+    print("payLNUrl called with amount $amount");
+    return _invokeMethodWhenReady("payLnurl", {"argument": amount});
+  }
+
   Future<String> getLogPath() {
     return getApplicationDocumentsDirectory().then((workingDir) {
       return workingDir.path + "/logs/bitcoin/mainnet/lnd.log";
@@ -333,8 +338,8 @@ class BreezBridge {
     return _invokeMethodImmediate("graphURL")
         .then((result) => result as String)
         .catchError((e) {
-          logger.log.info("Error in graphURL:"+e.toString());
-        });
+      logger.log.info("Error in graphURL:" + e.toString());
+    });
   }
 
   Future sendPaymentFailureBugReport(String traceReport) {

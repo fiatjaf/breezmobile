@@ -383,8 +383,7 @@ class HomeState extends State<Home> {
         widget.invoiceBloc.decodeInvoiceSink.add(snapshot.data);
       } else {
         Navigator.of(context).push(FadeInRoute(
-          builder: (_) =>
-              SpontaneousPaymentPage(nodeID, firstPaymentItemKey),
+          builder: (_) => SpontaneousPaymentPage(nodeID, firstPaymentItemKey),
         ));
       }
     });
@@ -455,11 +454,13 @@ class HomeState extends State<Home> {
         context,
         widget.userProfileBloc,
         widget.accountBloc,
+        widget.lnurlBloc,
         widget.invoiceBloc.receivedInvoicesStream,
         firstPaymentItemKey,
         scrollController,
         _scaffoldKey);
-    LNURLHandler(context, widget.lnurlBloc);
+    LNURLHandler(
+        context, widget.lnurlBloc, widget.invoiceBloc.receivedInvoicesSink);
     CTPJoinSessionHandler(widget.userProfileBloc, widget.ctpBloc, this.context,
         (session) {
       Navigator.popUntil(context, (route) {

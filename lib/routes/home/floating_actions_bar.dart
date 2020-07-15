@@ -114,8 +114,7 @@ class FloatingActionsBar extends StatelessWidget {
                               String lower = scannedString.toLowerCase();
 
                               // lnurl string
-                              if (lower.startsWith("lightning:lnurl") ||
-                                  lower.startsWith("lnurl")) {
+                              if (lower.contains("lnurl1")) {
                                 await _handleLNUrl(
                                     lnurlBloc, context, scannedString);
                                 return;
@@ -210,6 +209,8 @@ class FloatingActionsBar extends StatelessWidget {
 
   Future _handleLNUrl(
       LNUrlBloc lnurlBloc, BuildContext context, String lnurl) async {
+    InvoiceBloc invoiceBloc = AppBlocsProvider.of<InvoiceBloc>(context);
+
     Fetch fetchAction = Fetch(lnurl);
     var cancelCompleter = Completer();
     var loaderRoute = createLoaderRoute(context, onClose: () {
@@ -225,7 +226,7 @@ class FloatingActionsBar extends StatelessWidget {
           return;
         }
 
-        LNURLHandler(context, lnurlBloc)
+        LNURLHandler(context, lnurlBloc, invoiceBloc.receivedInvoicesSink)
             .executeLNURLResponse(context, lnurlBloc, response);
       },
     ).catchError((err) {

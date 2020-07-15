@@ -1,4 +1,5 @@
 import 'package:breez/bloc/async_action.dart';
+import 'package:fixnum/fixnum.dart';
 
 class Fetch extends AsyncAction {
   final String lnurl;
