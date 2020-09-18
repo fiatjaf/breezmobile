@@ -189,10 +189,12 @@ class PaymentRequestInfoDialogState extends State<PaymentRequestInfoDialog> {
                 focusNode: _amountFocusNode,
                 controller: _invoiceAmountController,
                 validatorFn: (Int64 amount) {
-                  if (amount < widget.invoice.min) {
-                    return "Can't pay less than ${widget.invoice.min}";
-                  } else if (amount > widget.invoice.max) {
-                    return "Can't pay more than ${widget.invoice.max}";
+                  if (widget.invoice.isLnurlPay) {
+                    if (amount < widget.invoice.min) {
+                      return "Can't pay less than ${widget.invoice.min}";
+                    } else if (amount > widget.invoice.max) {
+                      return "Can't pay more than ${widget.invoice.max}";
+                    }
                   }
 
                   return account.validateOutgoingPayment(amount);

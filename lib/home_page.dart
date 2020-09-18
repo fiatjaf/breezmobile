@@ -454,7 +454,6 @@ class HomeState extends State<Home> {
         context,
         widget.userProfileBloc,
         widget.accountBloc,
-        widget.lnurlBloc,
         widget.invoiceBloc.receivedInvoicesStream,
         firstPaymentItemKey,
         scrollController,

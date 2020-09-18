@@ -25,7 +25,7 @@ class PaymentRequestModel {
   Int64 get amount => _invoice.amount;
   Int64 get min => _invoice.minSendable;
   Int64 get max => _invoice.maxSendable;
-  String get rawPayReq => _rawPayReq;
+  String get rawPayReq => _invoice.isLnurlPay ? "lnurl" : _rawPayReq;
   bool get loaded => _invoice != null ? true : false;
   String get paymentHash => _paymentHash;
   bool get isLnurlPay => _invoice.isLnurlPay;

@@ -4,7 +4,6 @@ import 'package:breez/bloc/account/account_actions.dart';
 import 'package:breez/bloc/account/account_bloc.dart';
 import 'package:breez/bloc/account/account_model.dart';
 import 'package:breez/bloc/invoice/invoice_model.dart';
-import 'package:breez/bloc/lnurl/lnurl_bloc.dart';
 import 'package:breez/widgets/payment_confirmation_dialog.dart';
 import 'package:breez/widgets/payment_request_info_dialog.dart';
 import 'package:breez/widgets/processsing_payment_dialog.dart';
@@ -23,13 +22,12 @@ enum PaymentRequestState {
 class PaymentRequestDialog extends StatefulWidget {
   final BuildContext context;
   final AccountBloc accountBloc;
-  final LNUrlBloc lnurlBloc;
   final PaymentRequestModel invoice;
   final GlobalKey firstPaymentItemKey;
   final ScrollController scrollController;
 
-  PaymentRequestDialog(this.context, this.accountBloc, this.lnurlBloc,
-      this.invoice, this.firstPaymentItemKey, this.scrollController);
+  PaymentRequestDialog(this.context, this.accountBloc, this.invoice,
+      this.firstPaymentItemKey, this.scrollController);
 
   @override
   State<StatefulWidget> createState() {
@@ -78,11 +76,7 @@ class PaymentRequestDialogState extends State<PaymentRequestDialog> {
     const double minHeight = 220;
     if (_state == PaymentRequestState.PROCESSING_PAYMENT) {
       return ProcessingPaymentDialog(widget.context, () {
-        if (widget.invoice.isLnurlPay) {
-          widget.lnurlBloc.actionsSink.add(this._sendPayment);
-        } else {
-          widget.accountBloc.userActionsSink.add(this._sendPayment);
-        }
+        widget.accountBloc.userActionsSink.add(this._sendPayment);
         return this._sendPayment.future;
       }, widget.accountBloc, widget.firstPaymentItemKey, _onStateChange,
           minHeight);

@@ -275,11 +275,15 @@ class BreezBridge {
     invoice.amount = amount;
     invoice.paymentRequest = blankInvoicePaymentRequest;
 
-    var payFunc = () => _invokeMethodWhenReady(
-                "sendPaymentForRequest", {"argument": invoice.writeToBuffer()})
-            .then((value) {
-          return PaymentResponse()..mergeFromBuffer(value ?? []);
-        });
+    var payFunc = () {
+      print(
+          "sendPaymentForRequest called with ${invoice.amount} / ${invoice.paymentRequest} !");
+      return _invokeMethodWhenReady(
+              "sendPaymentForRequest", {"argument": invoice.writeToBuffer()})
+          .then((value) {
+        return PaymentResponse()..mergeFromBuffer(value ?? []);
+      });
+    };
 
     return _invokePaymentWithGraphSyncAndRetry(payFunc);
   }

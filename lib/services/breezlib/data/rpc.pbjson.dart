@@ -73,7 +73,7 @@ const Payment$json = const {
     const {'1': 'isChannelCloseConfimed', '3': 16, '4': 1, '5': 8, '10': 'isChannelCloseConfimed'},
     const {'1': 'closedChannelTxID', '3': 17, '4': 1, '5': 9, '10': 'closedChannelTxID'},
     const {'1': 'isKeySend', '3': 18, '4': 1, '5': 8, '10': 'isKeySend'},
-    const {'1': 'lnurlPay', '3': 19, '4': 1, '5': 11, '6': '.data.LnurlPay', '10': 'lnurlPay'},
+    const {'1': 'lnurlPay', '3': 19, '4': 1, '5': 11, '6': '.data.LnurlPayInfo', '10': 'lnurlPay'},
   ],
   '4': const [Payment_PaymentType$json],
 };
@@ -430,8 +430,8 @@ const LNURLChannel$json = const {
   ],
 };
 
-const LnurlPay$json = const {
-  '1': 'LnurlPay',
+const LnurlPayInfo$json = const {
+  '1': 'LnurlPayInfo',
   '2': const [
     const {'1': 'lnurl', '3': 1, '4': 1, '5': 9, '10': 'lnurl'},
     const {'1': 'repeatable', '3': 2, '4': 1, '5': 8, '10': 'repeatable'},

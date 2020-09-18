@@ -14,7 +14,6 @@ class InvoiceNotificationsHandler {
   final BuildContext _context;
   final UserProfileBloc _userProfileBloc;
   final AccountBloc _accountBloc;
-  final LNUrlBloc _lnurlBloc;
   final Stream<PaymentRequestModel> _receivedInvoicesStream;
   final GlobalKey firstPaymentItemKey;
   final ScrollController scrollController;
@@ -27,7 +26,6 @@ class InvoiceNotificationsHandler {
       this._context,
       this._userProfileBloc,
       this._accountBloc,
-      this._lnurlBloc,
       this._receivedInvoicesStream,
       this.firstPaymentItemKey,
       this.scrollController,
@@ -69,13 +67,8 @@ class InvoiceNotificationsHandler {
               useRootNavigator: false,
               context: _context,
               barrierDismissible: false,
-              builder: (_) => paymentRequest.PaymentRequestDialog(
-                  _context,
-                  _accountBloc,
-                  _lnurlBloc,
-                  payreq,
-                  firstPaymentItemKey,
-                  scrollController));
+              builder: (_) => paymentRequest.PaymentRequestDialog(_context,
+                  _accountBloc, payreq, firstPaymentItemKey, scrollController));
         });
       }).onError((error) {
         _setLoading(false);

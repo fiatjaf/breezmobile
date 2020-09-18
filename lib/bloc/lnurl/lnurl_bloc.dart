@@ -27,7 +27,7 @@ class LNUrlBloc with AsyncActionsHandler {
       Fetch: _fetch,
       Withdraw: _withdraw,
       OpenChannel: _openChannel,
-      account_actions.SendPayment: _pay,
+      /* Pay is handled on AccountBloc as a normal SendPayment. */
     });
     listenActions();
   }
@@ -95,10 +95,6 @@ class LNUrlBloc with AsyncActionsHandler {
         tryLimit: 3,
         interval: Duration(seconds: 5));
     action.resolve(await openResult);
-  }
-
-  Future _pay(account_actions.SendPayment action) async {
-    action.resolve(await _breezLib.payLNUrl(action.paymentRequest.amount));
   }
 
   @override

@@ -224,7 +224,7 @@ class Payment extends $pb.GeneratedMessage {
     ..aOB(16, 'isChannelCloseConfimed', protoName: 'isChannelCloseConfimed')
     ..aOS(17, 'closedChannelTxID', protoName: 'closedChannelTxID')
     ..aOB(18, 'isKeySend', protoName: 'isKeySend')
-    ..aOM<LnurlPay>(19, 'lnurlPay', protoName: 'lnurlPay', subBuilder: LnurlPay.create)
+    ..aOM<LnurlPayInfo>(19, 'lnurlPay', protoName: 'lnurlPay', subBuilder: LnurlPayInfo.create)
     ..hasRequiredFields = false
   ;
 
@@ -390,15 +390,15 @@ class Payment extends $pb.GeneratedMessage {
   void clearIsKeySend() => clearField(18);
 
   @$pb.TagNumber(19)
-  LnurlPay get lnurlPay => $_getN(16);
+  LnurlPayInfo get lnurlPay => $_getN(16);
   @$pb.TagNumber(19)
-  set lnurlPay(LnurlPay v) { setField(19, v); }
+  set lnurlPay(LnurlPayInfo v) { setField(19, v); }
   @$pb.TagNumber(19)
   $core.bool hasLnurlPay() => $_has(16);
   @$pb.TagNumber(19)
   void clearLnurlPay() => clearField(19);
   @$pb.TagNumber(19)
-  LnurlPay ensureLnurlPay() => $_ensure(16);
+  LnurlPayInfo ensureLnurlPay() => $_ensure(16);
 }
 
 class PaymentsList extends $pb.GeneratedMessage {
@@ -2085,8 +2085,8 @@ class LNURLChannel extends $pb.GeneratedMessage {
   void clearUri() => clearField(3);
 }
 
-class LnurlPay extends $pb.GeneratedMessage {
-  static final $pb.BuilderInfo _i = $pb.BuilderInfo('LnurlPay', package: const $pb.PackageName('data'), createEmptyInstance: create)
+class LnurlPayInfo extends $pb.GeneratedMessage {
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo('LnurlPayInfo', package: const $pb.PackageName('data'), createEmptyInstance: create)
     ..aOS(1, 'lnurl')
     ..aOB(2, 'repeatable')
     ..aOS(3, 'metadataHash', protoName: 'metadataHash')
@@ -2095,20 +2095,20 @@ class LnurlPay extends $pb.GeneratedMessage {
     ..hasRequiredFields = false
   ;
 
-  LnurlPay._() : super();
-  factory LnurlPay() => create();
-  factory LnurlPay.fromBuffer($core.List<$core.int> i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromBuffer(i, r);
-  factory LnurlPay.fromJson($core.String i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(i, r);
-  LnurlPay clone() => LnurlPay()..mergeFromMessage(this);
-  LnurlPay copyWith(void Function(LnurlPay) updates) => super.copyWith((message) => updates(message as LnurlPay));
+  LnurlPayInfo._() : super();
+  factory LnurlPayInfo() => create();
+  factory LnurlPayInfo.fromBuffer($core.List<$core.int> i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromBuffer(i, r);
+  factory LnurlPayInfo.fromJson($core.String i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(i, r);
+  LnurlPayInfo clone() => LnurlPayInfo()..mergeFromMessage(this);
+  LnurlPayInfo copyWith(void Function(LnurlPayInfo) updates) => super.copyWith((message) => updates(message as LnurlPayInfo));
   $pb.BuilderInfo get info_ => _i;
   @$core.pragma('dart2js:noInline')
-  static LnurlPay create() => LnurlPay._();
-  LnurlPay createEmptyInstance() => create();
-  static $pb.PbList<LnurlPay> createRepeated() => $pb.PbList<LnurlPay>();
+  static LnurlPayInfo create() => LnurlPayInfo._();
+  LnurlPayInfo createEmptyInstance() => create();
+  static $pb.PbList<LnurlPayInfo> createRepeated() => $pb.PbList<LnurlPayInfo>();
   @$core.pragma('dart2js:noInline')
-  static LnurlPay getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<LnurlPay>(create);
-  static LnurlPay _defaultInstance;
+  static LnurlPayInfo getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<LnurlPayInfo>(create);
+  static LnurlPayInfo _defaultInstance;
 
   @$pb.TagNumber(1)
   $core.String get lnurl => $_getSZ(0);

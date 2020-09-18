@@ -410,7 +410,7 @@ class PaymentInfo {
     return "https://blockstream.info/tx/$closeChannelTx";
   }
 
-  LnurlPay get lnurlPay => _paymentResponse.lnurlPay;
+  LnurlPayInfo get lnurlPay => _paymentResponse.lnurlPay;
 
   bool get keySend => _paymentResponse.isKeySend;
 
